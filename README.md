@@ -12,6 +12,10 @@ Column chromatography is a routine technique for the separation of components fr
 
 Gravity flow and centrifugation techniques, while simple and relatively inexpensive, are labour intensive and time consuming. Conversely, commercial systems allow a high degree of automation, limiting hands-on time, and allow more complex elution protocols, such as elution using salt or pH gradients. However, these systems require specialised, expensive equipment. The project proposed here aims to produce a lower cost, modular, open-source alternative to these commercial systems for performing simple, routine purifications.
 
+![Banner_image](Pictures/Low_Cost_FPLC_Banner.png)
+<img src="https://github.com/BioMakers/06_Low-cost-pressurised-liquid-chromatography-system/Pictures/Steph.png" alt="Team" style="width: 60px;"/>
+<img src="https://github.com/BioMakers/06_Low-cost-pressurised-liquid-chromatography-system/Pictures/Wolfgang.png" alt="Team" style="width: 60px;"/>
+
 ## Software
 
 Explain functionality of software components (if any) as concisely as possible, developers should be able to figure out how your project solves their problem by looking at the code example. Ideally, this should be pseudo code or an abstract graphical representation of your code e.g entity relationship diagram. Consider adding a screenshot of your User Interface.
