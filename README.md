@@ -1,4 +1,4 @@
-## A Low-cost, pressurised liquid chromatography system for the purification of proteins and small molecules
+## Open-source pressurised liquid chromatography system for the purification of proteins and small molecules
 
 ## Synopsis
 
