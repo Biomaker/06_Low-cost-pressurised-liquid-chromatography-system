@@ -1,5 +1,7 @@
 /*Script that drives a 2D SCARA arm to a defined (X,Y) position. 
- * Version 1.2 - fixed bugs and added button input support
+ * Version 1.4 - added ca;ibration for the shoulder joint
+ *Version 1.3 - added 96 well plate fractionation
+ *Version 1.2 - fixed bugs and added button input support
  * UPDATE:
  * Can now use MoveUsingSerial(); to move the arm to different X and Y positions using the serial monitor. Can also use MoveUsingButtons(); to
  * drive the arm using 4 directional buttons. This setup uses the Gtronics protoyping board, so all buttons are wired to one analog input pin via
@@ -42,8 +44,8 @@
   const float upperArmLength = 125;
 
 //Motor constants
-  const int stepPinMot1 = 3;
-  const int dirPinMot1 = 6;
+  const int stepPinMot1 = 11;
+  const int dirPinMot1 = 12;
   const int stepIntervalMot1 =  10;
 
   const int stepPinMot2 = 5;
@@ -79,6 +81,20 @@
 
   bool positionPossible = true;
   char directionButton;
+  
+  //Limit buttons
+  int button1Pin = 9;
+  int button2Pin = 8;
+
+  int button1 = 0;
+  int button2 = 0;
+
+  bool button1PreviouslyPressed = false;
+  bool button2PreviouslyPressed = false;
+  bool calibrationFinished = false;
+
+  int CWsteps = 0;
+  int CCWsteps = 0;
 
 void setup() {
 
@@ -94,9 +110,14 @@ void setup() {
   pinMode(dirPinMot2, OUTPUT);
 
   pinMode(analogPinA0,INPUT);
+  pinMode(button1Pin, INPUT);
+  pinMode(button2Pin,INPUT);
 
   //Calibrate the starting arm position and set HandX and HandY variables as well as ElbowX and ElbowY, also determines limits
   //For now these are hardcoded. Work on a calibration sketch is in progress.
+  
+  CalibrateArmPosition();
+  Serial.println("Calibration successful");
   elbowX = 0;
   elbowY = upperArmLength;
   handX = 0;
@@ -109,7 +130,7 @@ void setup() {
 void loop() 
 {
   //Moves the arm using input from the serial monitor
-  MoveUsingSerial();  
+  MoveUsingSerial();
 }
 
   //Saves the current position to the previous position variables
@@ -405,7 +426,7 @@ while(!not_number)
       }
       else 
       {
-        result = rx_str.toFloat();
+        result = rx_str.toInt();
 
         //Check if the number is negative
         if(isNegative)
@@ -525,3 +546,95 @@ void MoveUsingButtons()
   targetX = handX;  
 }
 
+void CollectFractions96WellPlate(float outletX, float outletY, int timeBetweenFractions)
+{
+  float xOffset = 14.3;
+  float yOffset = 11.2;
+  float distanceBetweenWells = 9;
+  float plateWidth = 127.8;
+  float plateHeight = 85.5;
+
+  int row;
+  int column;
+
+  Serial.println("Starting fractionation - 96-well plate");
+
+  for(int i = 0; i < 8; ++i)
+  {
+    for(int j = 0; j<8; ++j)
+    {
+      row = i;
+      column = j;
+
+      SaveArmPosition();
+      
+      targetX = outletX + plateWidth/2 - xOffset + j*distanceBetweenWells;
+      targetY = outletY - plateHeight/2 + yOffset - i*distanceBetweenWells;
+
+      SetTarget(targetX,targetY);
+       CalculateElbowPosition();
+  
+       if(positionPossible)
+       {
+          MoveArm();
+       }
+       Serial.print("Fraction: ");
+       Serial.print(row);
+       Serial.print(",");
+       Serial.print(column);
+       Serial.println();
+       Serial.print("Target: ");
+       Serial.print(targetX);
+       Serial.print(",");
+       Serial.print(targetY);
+       Serial.println();
+       delay(timeBetweenFractions);
+    }
+  }
+  SaveArmPosition();
+  SetTarget(0,250);
+  CalculateElbowPosition();
+  MoveArm();
+  
+  Serial.println("Fractionation finished");
+}
+
+void CalibrateArmPosition()
+{
+    while(!calibrationFinished) 
+  {
+  button1 = digitalRead(button1Pin);
+  button2 = digitalRead(button2Pin);
+  
+  while(!button1PreviouslyPressed)
+  {    
+    TurnStepper(2,false,1,10);
+    CWsteps += 1;
+    button1 = digitalRead(button1Pin);
+    if(button1)
+    {
+      button1PreviouslyPressed = true;
+    }
+  }
+
+    while(!button2PreviouslyPressed)
+  {    
+    TurnStepper(2,true,1,10);
+    CCWsteps += 1;
+    button2 = digitalRead(button2Pin);
+    if(button2)
+    {
+      button2PreviouslyPressed = true;
+    }
+  }
+  
+  if(button1PreviouslyPressed && button2PreviouslyPressed)
+  {
+    float totalSteps = float(CCWsteps)/2;
+    TurnStepper(2,false,totalSteps,10);
+    button1PreviouslyPressed =false;
+    button2PreviouslyPressed = false;
+    calibrationFinished = true;
+  }
+  }
+}
