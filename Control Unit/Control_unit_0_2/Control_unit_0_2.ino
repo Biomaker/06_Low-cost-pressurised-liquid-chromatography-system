@@ -2,10 +2,14 @@
          Biomaker Challenge 2017 - Control unit code
          
 
+The pressure sensor library is by Luke Miller and can be found at http://github.com/millerlp
 */
 
 //Include Wire library for I2C communication
 #include <Wire.h>
+
+//Include library for pressure sensor
+#include <MS5803_14.h>
 
 //Include Grove RGB LCD library
 #include "rgb_lcd.h"
@@ -38,7 +42,11 @@ int cont = 0;
 
 //Variables for sensor values
 int UV;
+int UVPin = A2;
 float pressureV;
+
+//Setup an object of the pressure sensor class
+MS_5803 pressureSensor = MS_5803(512);
 
 //Other variables
 int pumpNr = 1;
@@ -56,7 +64,13 @@ void setup()
   lcd.begin(16,2);
   lcd.setRGB(255,255,255);
   lcd.noBlink();
-  lcd.clear();  
+  lcd.clear();
+
+  //Initialize the MS5803 pressure sensor
+  pressureSensor.initializeMS_5803(false);
+
+  //Initialize data pins
+  pinMode(UVPin,INPUT);  
 }
 
 void loop()
@@ -619,15 +633,24 @@ while(state == 8)
 //Function to read out the UV sensor
 int ReadUVSensor()
 {
-  int UVvalue = 120;
+  int UVvalue = analogRead(UVPin);
   return UVvalue;
 }
 
 //Function to read out the pressure sensor - will read in the value from the sensor in Bar and convert to mPa by dividing by 10
 float ReadPressureSensor()
 {
-  float pressureValue = 0.1;
-  return pressureValue;
+  //Sensor value
+  float value;
+  
+  //Read the sensor
+  pressureSensor.readSensor();
+  
+  //Assign pressure sensor value (function returns value in mbar) and convert to bar
+  value = pressureSensor.pressure()/1000;
+  
+  //Return the value in mPa
+  return value;
 }
 
 //Function that will scroll through a menu and display the cursor appropriately
