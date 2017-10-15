@@ -1,3 +1,9 @@
+/*
+         Biomaker Challenge 2017 - Control unit code
+         
+
+*/
+
 //Include Wire library for I2C communication
 #include <Wire.h>
 
@@ -32,11 +38,11 @@ int cont = 0;
 
 //Variables for sensor values
 int UV;
-int pressureV;
+float pressureV;
 
 //Other variables
-int pumpNr;
-int flowRate;
+int pumpNr = 1;
+int flowRate = 0;
 
 void setup()
 {
@@ -365,7 +371,6 @@ while(state == 6)
 //Manual pump control menu
 while(state == 7)
 {
-  pumpNr = 1;
   flowRate = 0;
   
   //Add code for manual pump control - for now, only allow back
@@ -411,7 +416,7 @@ while(state == 7)
             button = ReadButton();
             
             //If press select, return to menu
-            if(button == SELECT)
+            if(button == LEFT)
             {
               delay(200);
               button = ReadButton();
@@ -455,7 +460,7 @@ while(state == 7)
             lcd.setCursor(15,cursorY);
             button = ReadButton();
             //Process input from BACK button (LEFT)
-            if(button == SELECT)
+            if(button == LEFT)
             {
               delay(200);
               button = ReadButton();
@@ -505,7 +510,7 @@ while(state == 7)
           lcd.setCursor(0,0);
           lcd.print("FR = ");
           lcd.print(flowRate);
-          lcd.print(" Pump =");
+          lcd.print(" Pump = ");
           lcd.print(pumpNr);
           lcd.setCursor(0,1);
           lcd.print("Proceed?");
@@ -538,8 +543,75 @@ while(state == 7)
 //Manual run monitoring
 while(state == 8)
 {
-  //Display UV and pressure data allow cancelling of run using back button
+  //Start the run by sending pump ID and flow rate to syringe pump
+  if(pumpNr == 1)
+  {
+    //Start a transmission to the pump at the indicated address
+    Wire.beginTransmission(pump1Address);
+    
+    //Send the flow rate
+    Wire.write(flowRate);
+    
+    //End transmission
+    Wire.endTransmission();
+  }
+  //Start the run by sending pump ID and flow rate to syringe pump
+  if(pumpNr == 2)
+  {
+    //Start a transmission to the pump at the indicated address
+    Wire.beginTransmission(pump2Address);
+  
+    //Send the flow rate
+    Wire.write(flowRate);
+    
+    //End transmission
+    Wire.endTransmission();
+  }
+  
+  //Allow initialization of the sensor display values
+  int previousUV = ReadUVSensor() + 100;
+  float previousPressure = ReadPressureSensor() + 2;
+  
   //Display flow rate
+  lcd.setCursor(10,1);
+  lcd.print("FR: ");
+  lcd.print(flowRate);
+  
+  //Loop to update the sensor values and detect any abort commands
+  while(true)
+  {
+    //Read the UV and pressure sensors and update the display if the value changes significantly
+    UV = ReadUVSensor();
+    pressureV = ReadPressureSensor();
+    
+    if(abs(UV - previousUV) > 5)
+    {
+      lcd.setCursor(1,0);
+      lcd.print("A280");
+      lcd.setCursor(6,0);
+      lcd.print(UV);
+    }
+    if(abs(pressureV - previousPressure) > 0.05)
+    {
+      lcd.setCursor(1,1);
+      lcd.print("P");
+      lcd.setCursor(3,1);
+      pressureV = ReadPressureSensor();
+      lcd.print(pressureV); 
+    }
+    
+    //Allow run abort using the back button
+    button = ReadButton();
+    if(button == LEFT)
+     {
+       state = 7;
+       delay(200);
+       lcd.clear();
+       lcd.noBlink();
+       button = ReadButton();
+       break;        
+     }
+  }
 }
   
 }
@@ -551,10 +623,10 @@ int ReadUVSensor()
   return UVvalue;
 }
 
-//Function to read out the pressure sensor
-int ReadPressureSensor()
+//Function to read out the pressure sensor - will read in the value from the sensor in Bar and convert to mPa by dividing by 10
+float ReadPressureSensor()
 {
-  int pressureValue = 140;
+  float pressureValue = 0.1;
   return pressureValue;
 }
 
