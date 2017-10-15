@@ -27,8 +27,16 @@ int cursorX = 0;
 int cursorY = 0;
 
 //Variables to monitor menu progression
-int state = 3;
+int state = 0;
 int cont = 0;
+
+//Variables for sensor values
+int UV;
+int pressureV;
+
+//Other variables
+int pumpNr;
+int flowRate;
 
 void setup()
 {
@@ -63,7 +71,7 @@ void loop()
     lcd.print("Challenge 2017");
     delay(2000);
     lcd.clear();
-    state = 3;
+    state = 1;
   }
   
   //Check connection to I2C devices 
@@ -260,8 +268,294 @@ void loop()
           break;        
       }
     }
-  }  
+  }
+
+//Manual run menu
+while(state == 4)
+{
+  //Code for manual run mode - display menu
+  lcd.setCursor(1,0);
+  lcd.print("Start pumps");
+  lcd.setCursor(1,1);
+  lcd.print("Sensor values");
+  lcd.setCursor(0,0);
+  lcd.blink();
+  cursorY = 0;
+  cursorX = 0;
+   
+  //Button input handling
+  while(true)
+  {
+    button = ReadButton();
+    ScrollMenu(button);
+    
+    //Process input from the select button - jump to appropriate menu item
+      if(button == SELECT)
+      {
+        if(cursorY == 0)
+        {
+          state = 7;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;
+        }
+        else if (cursorY == 1)
+        {
+          state = 6;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;
+        }
+      }
+    
+    //Process input from BACK button (LEFT)
+      if(button == LEFT)
+      {
+          state = 3;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;        
+      }
+  }
+}
+
+//Method run menu
+while(state == 5)
+{
+  //Code for automatic run mode - GFP program - step elute
+  //Display available programs
+  //Allow button input to select
   
+  //Control pumps and fraction collector accordingly
+}
+
+//Display sensor values menu
+while(state == 6)
+{
+  lcd.setCursor(1,0);
+  lcd.print("Abs280");
+  lcd.setCursor(10,0);
+  UV = ReadUVSensor();
+  lcd.print(UV);
+  lcd.setCursor(1,1);
+  lcd.print("Pressure");
+  lcd.setCursor(10,1);
+  pressureV = ReadPressureSensor();
+  lcd.print(pressureV);
+  
+  for(int i = 0; i <=20; ++i)
+  {
+    button = ReadButton();
+    //Process input from BACK button (LEFT)
+      if(button == LEFT)
+      {
+          state = 4;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;        
+      }
+     delay(100);    
+  }
+}
+
+//Manual pump control menu
+while(state == 7)
+{
+  pumpNr = 1;
+  flowRate = 0;
+  
+  //Add code for manual pump control - for now, only allow back
+  lcd.setCursor(1,0);
+  lcd.print("Pump nr.");
+  lcd.setCursor(15,0);
+  lcd.print(pumpNr);
+  lcd.setCursor(1,1);
+  lcd.print("Flow rate");
+  lcd.setCursor(15,1);
+  lcd.print(flowRate);
+  lcd.setCursor(0,0);
+  lcd.blink();
+  cursorY = 0;
+  cursorX = 0;
+
+  
+  while(true)
+  {
+    button = ReadButton();
+    ScrollMenu(button);
+    lcd.blink();
+    
+    //Process input from BACK button (LEFT)
+      if(button == LEFT)
+      {
+          state = 4;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;        
+      }
+      
+      //Enter the scroll menu to change value
+      if(button == RIGHT)
+      {
+        //Change the pump nr.
+        if(cursorY == 0)
+        {
+          while(true)
+          {
+            lcd.setCursor(15,cursorY);
+            button = ReadButton();
+            
+            //If press select, return to menu
+            if(button == SELECT)
+            {
+              delay(200);
+              button = ReadButton();
+              lcd.setCursor(0,cursorY);
+              break;        
+             }
+            //If press up or down, change value of the pump
+            if(button == UP)
+            {
+              if(pumpNr == 1)
+              {
+                pumpNr += 1;
+              }
+              else if(pumpNr == 2)
+              {
+                pumpNr -= 1;
+              }
+              lcd.print(pumpNr);
+              delay(200);
+            }
+            if(button == DOWN)
+            {
+              if(pumpNr == 1)
+              {
+                pumpNr += 1;
+              }
+              else if(pumpNr == 2)
+              {
+                pumpNr -= 1;
+              }
+              lcd.print(pumpNr);
+              delay(200);
+            }           
+          }
+        }
+        //Change the flow rate
+        if(cursorY == 1)
+        {
+          while(true)
+          {
+            lcd.setCursor(15,cursorY);
+            button = ReadButton();
+            //Process input from BACK button (LEFT)
+            if(button == SELECT)
+            {
+              delay(200);
+              button = ReadButton();
+              lcd.setCursor(0,cursorY);
+              break;        
+             }
+            //If press up or down, change value of the pump
+            if(button == UP)
+            {
+              if(flowRate < 5)
+              {
+                flowRate += 1;
+              }
+              else if(flowRate >= 5)
+              {
+                flowRate = 0;
+              }
+              lcd.print(flowRate);
+              delay(200);
+            }
+            if(button == DOWN)
+            {
+              if(flowRate > 0)
+              {
+                flowRate -= 1;
+              }
+              else if(flowRate <= 0)
+              {
+                flowRate = 5;
+              }
+              lcd.print(flowRate);
+              delay(200);
+            } 
+          }
+        }
+      }
+      
+      //Start the run if press SELECT
+      if(button == SELECT)
+      {
+        lcd.clear();
+        lcd.noBlink();
+        
+      //Confirmation screen  
+        while(true)
+        {
+          lcd.setCursor(0,0);
+          lcd.print("FR = ");
+          lcd.print(flowRate);
+          lcd.print(" Pump =");
+          lcd.print(pumpNr);
+          lcd.setCursor(0,1);
+          lcd.print("Proceed?");
+          delay(200);
+        
+          button = ReadButton();
+          if(button == LEFT)
+          {
+            state = 7;
+            delay(200);
+            lcd.clear();
+            lcd.noBlink();
+            break;        
+          }
+          if(button == SELECT)
+           {
+             state = 8;
+             delay(200);
+             lcd.clear();
+             lcd.noBlink();
+             break;
+           } 
+         }
+        break;
+      }
+    
+  }
+}
+
+//Manual run monitoring
+while(state == 8)
+{
+  //Display UV and pressure data allow cancelling of run using back button
+  //Display flow rate
+}
+  
+}
+
+//Function to read out the UV sensor
+int ReadUVSensor()
+{
+  int UVvalue = 120;
+  return UVvalue;
+}
+
+//Function to read out the pressure sensor
+int ReadPressureSensor()
+{
+  int pressureValue = 140;
+  return pressureValue;
 }
 
 //Function that will scroll through a menu and display the cursor appropriately
