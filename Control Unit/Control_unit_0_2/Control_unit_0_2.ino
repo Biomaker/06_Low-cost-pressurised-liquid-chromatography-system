@@ -27,7 +27,7 @@ int cursorX = 0;
 int cursorY = 0;
 
 //Variables to monitor menu progression
-int state = 2;
+int state = 3;
 int cont = 0;
 
 void setup()
@@ -41,7 +41,8 @@ void setup()
   //Setup the LCD - 16 characters per line, 2 lines - background white
   lcd.begin(16,2);
   lcd.setRGB(255,255,255);
-  lcd.noBlink();  
+  lcd.noBlink();
+  lcd.clear();  
 }
 
 void loop()
@@ -62,7 +63,7 @@ void loop()
     lcd.print("Challenge 2017");
     delay(2000);
     lcd.clear();
-    state = 1;
+    state = 3;
   }
   
   //Check connection to I2C devices 
@@ -139,40 +140,7 @@ void loop()
     {
       //Read the input buttons and move cursor according to the choice made (up or down only) 
       button = ReadButton();
-      
-      //Process input from DOWN button and move cursor depending on the current location of the cursor
-      if(button == DOWN)
-      {
-        if(cursorY == 0)
-        {
-         cursorY += 1;
-         lcd.setCursor(0,cursorY);
-         delay(200);
-        }
-        else if (cursorY == 1)
-        {
-         cursorY -= 1;
-         lcd.setCursor(0,cursorY);
-         delay(200);         
-        }
-      }
-      
-      //Process input from the UP button and move cursor depending on the current location of the cursor
-      if(button == UP)
-      {
-        if(cursorY ==1)
-        {
-          cursorY -= 1;
-          lcd.setCursor(0,cursorY);
-          delay(200);
-        }
-        else if(cursorY == 0)
-        {
-          cursorY += 1;
-          lcd.setCursor(0,cursorY);
-          delay(200);
-        }
-      }
+      ScrollMenu(button);
       
       //Process input from the select button
       if(button == SELECT)
@@ -181,6 +149,8 @@ void loop()
         {
           state = 2;
           delay(200);
+          lcd.clear();
+          lcd.noBlink();
           break;
         }
         else if (cursorY == 1)
@@ -193,12 +163,150 @@ void loop()
     }
   }
 
-//
+//Start the startup procedure to calibrate the robot arm
   while(state == 2)
+  { 
+    //Display instructions prior to calibration
+    lcd.setCursor(0,0);
+    lcd.print("Remove platerack");
+    lcd.setCursor(0,1);
+    lcd.print("then press enter");
+    button = ReadButton();
+    
+    //Handle button input
+    if(button == SELECT)
+    {
+      lcd.clear();
+      lcd.setCursor(2,0);
+      lcd.print("Moving arm...");
+      delay(1000);
+      
+      //When user presses select start calibrating
+      while(true)
+      {
+        //Calibrate arm code
+        if(CalibrateArm() == 1)
+        {
+          lcd.clear();
+          lcd.setCursor(1,0);
+          lcd.print("Arm calibrated");
+          state = 3;
+          delay(1000);
+          lcd.clear();
+          break;
+        }
+      }      
+    }   
+      //Process input from BACK button (LEFT)
+      if(button == LEFT)
+      {
+          state = 1;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;        
+      }    
+  }
+  
+  //Main menu
+  while(state == 3)
   {
-    lcd.clear();
+    //Display the menu
+    lcd.setCursor(1,0);
+    lcd.print("Manual Run");
+    lcd.setCursor(1,1);
+    lcd.print("Method Run");
+    lcd.setCursor(0,0);
+    lcd.blink();
+    
+    cursorY = 0;
+    cursorX = 0;
+    
+    //Allow button input for up/down scrolling through the menu and selecting
+    while(true)
+    {
+      //Read button and process input accordingly
+      button = ReadButton();
+      ScrollMenu(button);
+      
+      //Process input from the select button - jump to appropriate menu item
+      if(button == SELECT)
+      {
+        if(cursorY == 0)
+        {
+          state = 4;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;
+        }
+        else if (cursorY == 1)
+        {
+          state = 5;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;
+        }
+      }
+      
+      //Process input from BACK button (LEFT)
+      if(button == LEFT)
+      {
+          state = 2;
+          delay(200);
+          lcd.clear();
+          lcd.noBlink();
+          break;        
+      }
+    }
   }  
   
+}
+
+//Function that will scroll through a menu and display the cursor appropriately
+void ScrollMenu(int button)
+{
+  //Process input from DOWN button and move cursor depending on the current location of the cursor    
+      if(button == DOWN)
+      {
+        if(cursorY == 0)
+        {
+          cursorY += 1;
+          delay(200);
+        }
+        else if(cursorY == 1)
+        {
+          cursorY -= 1;
+          delay(200);
+        }
+        lcd.setCursor(0,cursorY);
+      }
+  //Process input from UP button and move cursor depending on the current location of the cursor
+      if(button == UP)
+      {
+        if(cursorY == 0)
+        {
+          cursorY += 1;
+          delay(200);
+        }
+        else if(cursorY == 1)
+        {
+          cursorY -= 1;
+          delay(200);
+        }
+        lcd.setCursor(0,cursorY);
+      }  
+}
+
+//Function that communicates with the arm Arduino and reports back when the arm is calibrated
+int CalibrateArm()
+{
+  //Send information to the arm to start calibration
+  
+  //Get acknowledgement that the arm is calibrated
+  
+  return 1;
 }
 
 //Function to check if I2C device responds - derived from I2Cscanner by Nick Gammon 
