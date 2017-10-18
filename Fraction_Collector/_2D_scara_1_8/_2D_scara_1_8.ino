@@ -1,4 +1,4 @@
-/*Script that drives a 2D SCARA arm to a defined (X,Y) position. 
+ /*Script that drives a 2D SCARA arm to a defined (X,Y) position. 
 *Version 1.8 fixed bugs in calibration function,removed unneccessary comments and added more code commenting
 *Version 1.6 - added calibration function - prompted by the control unit over I2C
 *Version 1.5 - added microstepping capability (required for accuracy) - had to disable calibration - no more digital pins - writing code to do this via one analog pin atm
@@ -119,16 +119,10 @@
   
   //Communication variables
   byte fracAddress = 11;
-  byte data = 1;
-  byte x = 0;
+  int data = 0;
 
 void setup() {
-
-  //Begin serial communication
-  Serial.begin(9600);
-  Serial.println("Initialize...");
-  delay(3000);
-
+  
   //Set up Arduino pins
   pinMode(stepPinMot1, OUTPUT);
   pinMode(dirPinMot1,OUTPUT);
@@ -159,43 +153,37 @@ void setup() {
   //Begin I2C communication and set up event handling for incoming comms
   Wire.begin(fracAddress);
   Wire.onReceive(receiveEvent);
-  Wire.onRequest(requestEvent);
+  
+  Serial.begin(9600);
 }
 
 void loop() 
 {
-
+  
   //Calibrate once get signal from control unit
   while(state == 0)
   {
     //If receive a 1 from the control unit, calibrate
     if(data == 1)
     {
-      state = CalibrateArmPosition();
-      x = state;
-    }   
+      //Run calibration function
+      CalibrateArmPosition();
+    }
+    delay(200);  
   }
   
   //Pump calibrated - wait for information to start collecting fractions
   while(state == 1)
-  {
-    //Collect fractions according to information from control unit
+  { 
+    delay(200);
   }
-}
-
-//Send data to control unit
-void requestEvent()
-{
-  //Send the current state of the fraction collector
-  Wire.write(x);
 }
 
 //Receive data from control unit
 void receiveEvent(int nrOfBytes)
 {
   //Read in data
-  int x = Wire.read();
-  data = x;
+  data = Wire.read();
 }
 
   //Saves the current position to the previous position variables
@@ -681,9 +669,8 @@ void CollectFractions96WellPlate(float outletX, float outletY, int timeBetweenFr
   Serial.println("Fractionation finished");
 }
 
-int CalibrateArmPosition()
-{
-  
+void CalibrateArmPosition()
+{ 
   //Calibrate the arm
   while(!calibrationFinished) 
   {
@@ -799,7 +786,7 @@ int CalibrateArmPosition()
      //Calibration is now finished
      calibrationFinished = true;
   } 
-  return 1;
+  state = 1;
 }
 
 //Function to allow you to set the microstepping rate of a DRV8825 motor board. Enter the fraction stepping as a string, then enter the three pins used for controlling.
