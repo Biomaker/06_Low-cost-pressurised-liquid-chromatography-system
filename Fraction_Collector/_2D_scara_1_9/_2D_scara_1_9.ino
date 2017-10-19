@@ -147,7 +147,11 @@ void setup() {
   elbowX = 0;
   elbowY = upperArmLength;
   handX = 0;
-  handY = upperArmLength+lowerArmLength; 
+  handY = upperArmLength+lowerArmLength;
+
+  //Position of the flowpath outlet
+  float outletX = 200;
+  float outletY = 120;
 
   targetX = handX;
   targetY = handY;
@@ -180,8 +184,7 @@ void loop()
     if(data == 4)
     {
       //Move to next fraction
-      nextFraction();
-      
+      nextFraction();     
     }
     delay(200);
 
