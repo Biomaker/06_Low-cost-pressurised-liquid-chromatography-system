@@ -1,4 +1,5 @@
  /*Script that drives a 2D SCARA arm to a defined (X,Y) position. 
+ *version 1.9 - allows fraction collection on demand by the control unit using pulses 
 *Version 1.8 fixed bugs in calibration function,removed unneccessary comments and added more code commenting
 *Version 1.6 - added calibration function - prompted by the control unit over I2C
 *Version 1.5 - added microstepping capability (required for accuracy) - had to disable calibration - no more digital pins - writing code to do this via one analog pin atm
@@ -89,6 +90,10 @@
 
   float targetX;
   float targetY;
+  
+  //Position of the flowpath outlet - these values work for a 96-well plate - need to adjust depending on fraction rack
+  const float outletX = 0;
+  const float outletY = 180;
  
   bool positionPossible = true;
   char directionButton;
@@ -149,10 +154,6 @@ void setup() {
   handX = 0;
   handY = upperArmLength+lowerArmLength;
 
-  //Position of the flowpath outlet
-  float outletX = 200;
-  float outletY = 120;
-
   targetX = handX;
   targetY = handY;
   
@@ -165,7 +166,6 @@ void setup() {
 
 void loop() 
 {
-  
   //Calibrate once get signal from control unit
   while(state == 0)
   {
@@ -174,6 +174,10 @@ void loop()
     {
       //Run calibration function
       CalibrateArmPosition();
+    }
+    if(data == 2)
+    {
+      state = 1;
     }
     delay(200);  
   }
@@ -186,7 +190,6 @@ void loop()
       //Move to next fraction
       nextFraction();     
     }
-    delay(200);
 
     if(data == 6)
     {
@@ -195,6 +198,8 @@ void loop()
       row = 0;
       MoveTo(0,250);
       state = 0;
+      data = 0;
+      break;
     }
   }
 }
@@ -215,24 +220,37 @@ void nextFraction()
     float plateWidth = 127.8;
     float plateHeight = 85.5;
   
-        targetX = outletX + plateWidth/2 - xOffset + column*distanceBetweenWells;
-        targetY = outletY - plateHeight/2 + yOffset - row*distanceBetweenWells;
+    targetX = outletX + plateWidth/2 - xOffset + column*distanceBetweenWells;
+    targetY = outletY - plateHeight/2 + yOffset - row*distanceBetweenWells;
 
-  MovementTo(targetX,targetY);
+  MoveTo(targetX,targetY);
 
   //After movement, increment column
   column++;
   
   //check if need to increment row
-  if(column >7)
+  if(column >11)
   {
     column = 0;
     row++;
   }
+  
+   //Set data back to 0
+  data = 0;
+  
+  //If finished the plate, set everything back to 0 and go back to starting position
+  if(row >7)
+  {
+    column = 0;
+    row = 0;
+    MoveTo(0,250);
+    data = 6;
+    state = 0;
+  }
 }
 
 //Function that combines all calls to allow easier use of the program
-void MovementTo(float X, float Y)
+void MoveTo(float X, float Y)
 {
   SaveArmPosition();
   SetTarget(X,Y);
@@ -366,14 +384,14 @@ void MoveArm()
   {
     TurnStepper(2,false,steps, stepIntervalMot1);
   }
-  Serial.print("Moving shoulder by: ");
-  Serial.print(shoulderAngle);
-  Serial.print(" degrees");
-  Serial.println();
-  Serial.print("Moving shoulder by: ");
-  Serial.print(steps);
-  Serial.print(" steps");
-  Serial.println();
+//  Serial.print("Moving shoulder by: ");
+//  Serial.print(shoulderAngle);
+//  Serial.print(" degrees");
+//  Serial.println();
+//  Serial.print("Moving shoulder by: ");
+//  Serial.print(steps);
+//  Serial.print(" steps");
+//  Serial.println();
   
   //Calculate new X,Y position after movement of first motor
   handX = handX + elbowX - previousElbowX;
@@ -442,14 +460,14 @@ void MoveArm()
     }
   }
   
-    Serial.print("Moving elbow by: ");
-  Serial.print(elbowAngle);
-  Serial.print(" degrees");
-  Serial.println();
-  Serial.print("Moving elbow by: ");
-  Serial.print(steps);
-  Serial.print(" steps");
-  Serial.println();
+//    Serial.print("Moving elbow by: ");
+//  Serial.print(elbowAngle);
+//  Serial.print(" degrees");
+//  Serial.println();
+//  Serial.print("Moving elbow by: ");
+//  Serial.print(steps);
+//  Serial.print(" steps");
+//  Serial.println();
 
   //Set hand position to the target position
   handX = targetX;
