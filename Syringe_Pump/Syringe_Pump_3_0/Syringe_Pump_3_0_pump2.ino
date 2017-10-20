@@ -38,7 +38,7 @@ bool downButtonPressed = false;
 
 //Data transmission variables
 int data = 0;
-byte pumpAddress = 10;
+byte pumpAddress = 9;
 
 void setup() 
 { 
