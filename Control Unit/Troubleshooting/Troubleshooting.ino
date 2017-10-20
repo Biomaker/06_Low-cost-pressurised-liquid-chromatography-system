@@ -43,7 +43,7 @@ void loop()
   float flowVol[4] = {1, 0, 1, 1};
   int pump[4] = {1, 1, 1, 2};
   int frac[4] = {1, 0, 1, 1};
-  float fracVol[4] = {1, 1, 0, 1};
+  float fracVol[4] = {1, 0, 1, 1};
   
   //To be able to calculate array sizes, calculate the size of a float and an int using this compiler
   float aFloat = 1.0;
@@ -67,20 +67,23 @@ void loop()
   
   //Start the program
   long startTime = millis();
-  long runTime;
-  long stepTime;
+  long runTime = 0;
+  long stepTime = 0;
   
    //Main program body - this loop will run until all program steps have finished
     for (int j = 0; j < programSteps; j++)
     {
       currentStep = j;
       long stepStartTime = millis();
+      stepTime = millis() - stepStartTime;
       bool stepFinished = false;
       bool sampleLoaded = false;
       byte address;
       lcd.clear();
       lcd.setRGB(255,255,255);
-      
+      Serial.println("J is:");
+      Serial.print(j);
+    
       while(!stepFinished)
       {
         
@@ -89,8 +92,6 @@ void loop()
         {     
           long totalStepTime = flowVol[currentStep]/flow[currentStep];
           totalStepTime = totalStepTime * 60 * 1000;
-          Serial.println(totalStepTime);
-          Serial.println(stepTime);
           
           //Send a message to the pumps to start flowing
           if(pump[j] == 1)
@@ -116,23 +117,28 @@ void loop()
           if(frac[j] == 1)
           {
             int fracOn = 4;
+            Serial.println("Collect fracs");
+            Serial.println(frac[j]);
             
             //Start fraction timer to know when to pulse
             long fracStartTime = millis();
             long fracTime = millis() - fracStartTime;
             long totalFracTime = (fracVol[currentStep]/flow[currentStep])*1000*60;
+            Serial.println(totalFracTime);
+            delay(1000);
             
             //If yes, activate fraction collector
-            Wire.begin(fracAddress);
+            Wire.beginTransmission(fracAddress);
             Wire.write(fracOn);
             Wire.endTransmission();
            
-           while(fracTime < totalFracTime)
+           while(totalFracTime > fracTime)
            {
              //Update run timers
               runTime = millis() - startTime;
               stepTime = millis() - stepStartTime;
               fracTime = millis() - fracStartTime;
+              Serial.println(fracTime);
              
               //Code to read sensor values
               UV = ReadUVSensor();
