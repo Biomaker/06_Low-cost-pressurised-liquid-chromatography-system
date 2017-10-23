@@ -18,8 +18,8 @@ the syringe pump. I2C communication, if present takes precedence and will disabl
 
 //Motor control variables - defined by wiring - see circuit diagrams
 int stepPin = 8;
-int dirPin = 9;
-int upButtonPin = 10;
+int dirPin = 10;
+int upButtonPin = 9;
 int downButtonPin = 11;
 
 int steps;

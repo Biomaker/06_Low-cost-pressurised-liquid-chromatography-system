@@ -196,9 +196,9 @@ void loop()
   { 
     //Display instructions prior to calibration
     lcd.setCursor(0,0);
-    lcd.print("Remove platerack");
-    lcd.setCursor(0,1);
-    lcd.print("then press enter");
+    lcd.print("For calibration");
+    lcd.setCursor(2,1);
+    lcd.print("press enter");
     button = ReadButton();
     
     int senddata = 1;
@@ -1059,10 +1059,10 @@ int ReadButton()
 void OnemlHisTrapStep(float flow[], float flowVol[], int pump[], int frac[], float fracVol[])
 {
   float writeflow[4] = {1, 0, 1, 1};    //Set a flow rate for each step - 
-  float writeflowVol[4] = {5, 0, 5, 5};
+  float writeflowVol[4] = {1, 0, 1, 1};
   int writepump[4] = {1, 1, 1, 2};
   int writefrac[4] = {0, 0, 1, 1};
-  float writefracVol[4] = {0, 0, 0.5, 0.5};
+  float writefracVol[4] = {0, 0, 0.2, 0.2};
 
   float aFloat = 1.0;
   int sizeOfFloat = sizeof(aFloat);
@@ -1083,7 +1083,7 @@ void OnemlHisTrapStep(float flow[], float flowVol[], int pump[], int frac[], flo
 //Washes the pumps
 void PumpWash(float flow[], float flowVol[], int pump[], int frac[], float fracVol[])
 {
-  float writeflow[2] = {5, 5};    //Set a flow rate for each step - 
+  float writeflow[2] = {10, 10};    //Set a flow rate for each step - 
   float writeflowVol[2] = {10,10};
   int writepump[2] = {2, 1};
   int writefrac[2] = {0, 0};

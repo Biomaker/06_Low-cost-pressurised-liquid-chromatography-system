@@ -93,7 +93,7 @@
   
   //Position of the flowpath outlet - these values work for a 96-well plate - need to adjust depending on fraction rack
   const float outletX = 0;
-  const float outletY = 180; //change back to 180
+  const float outletY = 140; 
  
   bool positionPossible = true;
   char directionButton;
@@ -145,8 +145,8 @@ void setup() {
   pinMode(analogPinA0,INPUT);
   
   //Set the microstep mode on both motors
-  SetMicroStep("1/32",Mot1M1,Mot1M2,Mot1M3, 1);
-  SetMicroStep("1/32",Mot2M1,Mot2M2,Mot2M3, 2);
+  SetMicroStep("1/16",Mot1M1,Mot1M2,Mot1M3, 1);
+  SetMicroStep("1/16",Mot2M1,Mot2M2,Mot2M3, 2);
 
   //Set HandX and HandY variables as well as ElbowX and ElbowY
   elbowX = 0;
@@ -166,13 +166,6 @@ void setup() {
 
 void loop() 
 {
-  CalibrateArmPosition();
-
-  while(true)
-  {
-    nextFraction(); 
-  }
-  
   //Calibrate once get signal from control unit
   while(state == 0)
   {
@@ -226,17 +219,9 @@ void nextFraction()
     float distanceBetweenWells = 9.0;
     float plateWidth = 127.8;
     float plateHeight = 85.5;
-    //targetX = outletX + plateWidth/2 - xOffset + column*distanceBetweenWells;
-    //targetY = outletY - plateHeight/2 + yOffset - row*distanceBetweenWells;
   
     targetX = outletX + (plateWidth/2 - xOffset) - float(column)*distanceBetweenWells;
     targetY = outletY - (plateHeight/2 - yOffset) + float(row)*distanceBetweenWells;
-    Serial.print("X: ");
-    Serial.print(targetX);
-    Serial.print(" ");
-        Serial.print("Y: ");
-    Serial.print(targetY);
-    Serial.println(" ");
 
   MoveTo(targetX,targetY);
 

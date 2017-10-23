@@ -88,7 +88,7 @@ void RunPump(int rate)
   delayBetwSteps = delayBetwSteps * 1000 * 60;
   
   //Run pump
-  TurnStepper(true, 1, delayBetwSteps);     
+  TurnStepper(false, 1, delayBetwSteps);     
 }
 
 
@@ -105,12 +105,12 @@ void RunPumpManually()
     //While pressing the up button, move the syringe pump up
     if (upButtonPressed)
     {
-      TurnStepper(false,10,3);
+      TurnStepper(true,10,3);
     }
    //While pressing the down button, move the syringe pump down 
     if (downButtonPressed)
     {
-      TurnStepper(true,10,3);
+      TurnStepper(false,10,3);
     }
   }
 }

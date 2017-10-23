@@ -18,8 +18,8 @@ the syringe pump. I2C communication, if present takes precedence and will disabl
 
 //Motor control variables - defined by wiring - see circuit diagrams
 int stepPin = 8;
-int dirPin = 10;
-int upButtonPin = 9;
+int dirPin = 9;
+int upButtonPin = 10;
 int downButtonPin = 11;
 
 int steps;
@@ -38,7 +38,7 @@ bool downButtonPressed = false;
 
 //Data transmission variables
 int data = 0;
-byte pumpAddress = 9;
+byte pumpAddress = 10;
 
 void setup() 
 { 
@@ -88,7 +88,7 @@ void RunPump(int rate)
   delayBetwSteps = delayBetwSteps * 1000 * 60;
   
   //Run pump
-  TurnStepper(true, 1, delayBetwSteps);     
+  TurnStepper(false, 1, delayBetwSteps);     
 }
 
 
@@ -105,12 +105,12 @@ void RunPumpManually()
     //While pressing the up button, move the syringe pump up
     if (upButtonPressed)
     {
-      TurnStepper(false,10,3);
+      TurnStepper(true,10,3);
     }
    //While pressing the down button, move the syringe pump down 
     if (downButtonPressed)
     {
-      TurnStepper(true,10,3);
+      TurnStepper(false,10,3);
     }
   }
 }
