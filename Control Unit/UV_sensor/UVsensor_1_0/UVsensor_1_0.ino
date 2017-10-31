@@ -1,3 +1,5 @@
+//Simple sketch for testing of the UV sensor in isolation - in the control unit, this simple code is implemented as a function
+
 //Constants for UV sensor
 const int sensorPin = A0;
 int sensorValue;
