@@ -22,11 +22,16 @@ For implementation of the UV sensor and pressure sensor, see the respective subf
 
 ## Description of files
 Control_unit_1_4                      -> latest Arduino sketch for running the control unit
+
 MCU v3.step                           -> CAD file for control unit enclosure
+
 MCU_base.stl and MCU_cover.stl        -> 3D printer files for enclosure
+
 Fritzing Files                        -> Diagrams for the pressure sensor and a Fritzing file for the circuit
+
 MCU_BOM_electronics.html              -> Bill of materials for the electronics
-MCU_Fritzing.pdf                      -> Picture of the Fritzing breadboard diagram
+
+MCU_Fritzing.pdf                      -> Picture of the Fritzing breadboard diagram buttons are (from left to right) - UP, DOWN, LEFT, RIGHT, SELECT
 
 ## Future work/Known bugs/issues
 
