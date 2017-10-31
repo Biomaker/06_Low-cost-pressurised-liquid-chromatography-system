@@ -29,7 +29,7 @@ MCU_base.stl and MCU_cover.stl        -> 3D printer files for enclosure
 
 Fritzing Files                        -> Diagrams for the pressure sensor and a Fritzing file for the circuit
 
-MCU_BOM_electronics.html              -> Bill of materials for the electronics
+MCU_BOM_electronics.md                -> Bill of materials for the electronics
 
 MCU_Fritzing.pdf                      -> Picture of the Fritzing breadboard diagram buttons are (from left to right) - UP, DOWN, LEFT, RIGHT, SELECT
 
