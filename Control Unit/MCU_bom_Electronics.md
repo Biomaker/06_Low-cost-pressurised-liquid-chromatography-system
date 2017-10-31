@@ -1,35 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Fritzing Bill of Materials</title>
-<style type="text/css">
-.meta {
-	font-size: small;
-	margin: 0.4em 0;
-}
-table {
-	border-collapse: collapse;
-}
-th {
-	font-weight: bold;
-	text-align: left;
-	border-bottom: 1px solid black;
-	padding: 0.1em 1.5em 0.2em 0.1em;
-}
-td {
-	border-bottom: 1px solid #CCC;
-	padding: 0.5em 1.5em 0.5em 0.1em;
-}
-.props {
-	font-size: smaller;
-}
-</style>
-</head>
-
 <body>
 <h1>Bill of Materials: MCU.fzz</h1>
-<p class="meta">/Users/Stef/OneDrive/BioMaker/WIP/Fritzing/MCU.fzz</p>
+<p class="meta">MCU.fzz</p>
 <p class="meta">Tuesday, October 31 2017, 23:30:00</p>
 
 <h2>Assembly List</h2>
