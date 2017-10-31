@@ -12,6 +12,14 @@ Gravity flow and centrifugation techniques, while simple and relatively inexpens
 
 ![Project_overview](Pictures/Overview.png)
 
+Diagram showing a high-level overview of the system. A typical method run for purification of a protein (preprogrammed in method runs) is as follows:
+1) Connection of a chromatography column appropriate for the purification between the pressure sensor and UV sensor
+2) Equilibration (conditioning) of the column using equilbration/wash buffer from pump 1
+3) Loading of the sample through the sample application port on the mixing chamber
+4) Washing of unbound material using equilbration/wash buffer from pump 1
+5) Elution of the protein of interest from the column using elution buffer from pump 2
+6) Steps 4 and 5 are accompanied by fractionation (separation of components) into different wells of a 96-well plate using the fraction collector
+
 This project is a work in progress. For each component, navigate to the component folder for a list of known bugs and planned future improvements.
 
 ## Software
