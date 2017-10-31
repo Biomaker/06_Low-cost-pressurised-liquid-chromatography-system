@@ -14,6 +14,4 @@ The sensor is integrated into the chromatography setup using a 3D printed part w
 
 To allow reading of the sensor values using an Arduino, we made use of the MS5803-14 Master library by Luke Miller, which can be found at http://github.com/millerlp. His repository also contains sketches for testing the sensor, which we used to verify our sensor was working prior to integration into the control unit.
 
-## Testing the sensor
-To test if the sensor is functioning a
 
