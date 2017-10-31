@@ -8,6 +8,12 @@ Gravity flow and centrifugation techniques, while simple and relatively inexpens
 
 ![Banner_image](Pictures/Banner_Team.png)
 
+## Overview Diagram
+
+![Project_overview](Pictures/Overview.png)
+
+This project is a work in progress. For each component, navigate to the component folder for a list of known bugs and planned future improvements.
+
 ## Software
 The project contains four Arduinos, one in each of two pumps, one in the fraction collector (SCARA arm) and one in the control unit. The control unit coordinates the other Arduinos and also reads out pressure sensor and UV sensor data. The SCARA arm Arduino controls the movements of the arm on prompting from the control unit over I2C. Pump Arduinos control the movement of the pumps after prompting by the control unit over I2C. For details of the software for each component, see the individual component folders.
 
