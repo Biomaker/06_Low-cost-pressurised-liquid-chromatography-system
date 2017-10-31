@@ -18,7 +18,12 @@ The menu layout is as follows:
 
 6) Method Run - Currently the unit has two pre-programmed methods- a pump wash method, which will first run pump 2 and then pump 1 to wash out residual buffer from a previous run and prefill the tubing with the solution from pump 1. The second method is a standard run method, which first runs pump 1, pauses to allow loading of the sample, runs pump 1 while collecting fractions and then runs pump 2 while collecting fractions. During the entire program, UV and pressure sensor readings are displayed. The current program assumes a 1 ml column.
 
+For implementation of the UV sensor and pressure sensor, see the respective subfolders.
+
 ## Description of files
+Control_unit_1_4                      -> latest Arduino sketch for running the control unit
+MCU v3.step                           -> CAD file for control unit enclosure
+MCU_base.stl and MCU_cover.stl        -> 3D printer files for enclosure
 
 ## Future work/Known bugs/issues
 
