@@ -19,7 +19,12 @@ The project contains different hardware modules, which are coordinated by the co
 
 See individual component folders.
 
-## License
+## Licenses
 
 Hardware is distributed under the Creative Commons share alike license (see Thingiverse links). 
+All software is available under the GNU General Public License Version 3 (https://www.gnu.org/licenses/gpl.html).
+
+This project makes use of the following Arduino libraries, which are distributed under the indicated licenses:
+1) Grove_LCD_RGB_backlight library - The MIT License (MIT) - Copyright (c) 2013 Seeed Technology Inc
+2) MS5803-14 Master library for MS5803 14bar pressure sensor module - by Luke Miller (http://github.com/millerlp) -GNU General Public License Version 3
 
