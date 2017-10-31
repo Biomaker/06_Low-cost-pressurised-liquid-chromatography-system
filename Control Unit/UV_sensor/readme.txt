@@ -1,1 +1,0 @@
-Diagrams, code and descriptions for the UV detector - WIP
