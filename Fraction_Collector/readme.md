@@ -10,9 +10,13 @@ A fraction collector is fundamentally a piece of equipment that can hold a numbe
  Basic requirements:
 -	use a flexible robotic arm with a small foot print when not in use
 -	exchangeable tool head to accommodate a range of reservoirs
+
     o	SBS 96-well plate (shallow/deep)
+    
     o	Eppendorf tubes
+    
     o	Other reservoirs
+    
 -	Use common hardware from the 3D printing community
 -	Focus on 3D printed parts to minimize commercial parts
 -	Make something more exciting than a standard 2-axis plotter
