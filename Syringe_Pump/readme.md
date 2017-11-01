@@ -7,6 +7,7 @@ A liquid chromatography setup relies on the controlled flow of liquid over a chr
 
 ## Description of files
 Syringe_Pump_3_0_pump1 and Syringe_Pump_3_0_pump2 -> Arduino sketches, each controlling one pump. The only difference between the two sketches is the I2C address, which allows the pumps to be controlled from the control unit.
+
 3D printer files -> contains CAD and 3D printer files for the syringe pump hardware
 
 ## Future work/Known bugs
